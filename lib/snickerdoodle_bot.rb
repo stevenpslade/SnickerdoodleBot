@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'twitter'
 
 client = Twitter::REST::Client.new do |config|
   config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
@@ -6,3 +7,5 @@ client = Twitter::REST::Client.new do |config|
   config.access_token        = ENV['TWITTER_ACCESS_TOKEN']
   config.access_token_secret = ENV['TWITTER_ACCESS_TOKEN_SECRET']
 end
+
+client.update('Bring back snickerdoodle ice cream!')
