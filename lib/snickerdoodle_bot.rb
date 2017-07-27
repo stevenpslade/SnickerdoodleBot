@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'twitter'
-require 'time'
 
 client = Twitter::REST::Client.new do |config|
   config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
@@ -47,3 +46,5 @@ if !found_snickerdoodle_tweet
     end
   end
 end
+
+client.update("Bring👏Back👏Snickerdoodle👏Ice👏Cream👏 #BringBackSnickerdoodle 🍦 #rainorshineYVR 🍦")
