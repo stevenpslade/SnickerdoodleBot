@@ -13,9 +13,11 @@ search_options = {
 }
 
 found_snickerdoodle_tweet = false
+one_day_ago = Time.now - (60 * 60 * 24)
 
 client.search("@rainorshineYVR+snickerdoodle -rt", search_options).each do |tweet|
-  if tweet.user.screen_name != "SnickerdooBot"
+  tweet_time  = tweet.created_at - (60 * 60 * 7)
+  if tweet.user.screen_name != "SnickerdooBot" && tweet_time > one_day_ago
     begin
       client.retweet!(tweet)
       client.favorite(tweet)
@@ -29,22 +31,39 @@ end
 
 if !found_snickerdoodle_tweet
   client.search("@rainorshineYVR -rt", search_options).each do |tweet|
-    if tweet.user.screen_name != "SnickerdooBot" && !tweet.reply?
-      one_day_ago = Time.now - (60 * 60 * 24)
-      tweet_time  = tweet.created_at - (60 * 60 * 7)
-      if tweet_time > one_day_ago
-
-        begin
-          client.update!("Rain or Shine Ice Cream needs to bring back snickerdoodle flavour!🍦👏 #BringBackSnickerdoodle " + tweet.url)
-          client.favorite(tweet)
-          puts 'tweet: ' + tweet.text
-        rescue
-          puts 'rescued from: ' + tweet.text
-        end
-
+    tweet_time  = tweet.created_at - (60 * 60 * 7)
+    if tweet.user.screen_name != "SnickerdooBot" && !tweet.reply? && tweet_time > one_day_ago
+      begin
+        client.update!("Rain or Shine Ice Cream needs to bring back snickerdoodle flavour!🍦👏 #BringBackSnickerdoodle " + tweet.url)
+        client.favorite(tweet)
+        puts 'tweet: ' + tweet.text
+      rescue
+        puts 'rescued from: ' + tweet.text
       end
     end
   end
 end
 
-client.update("Bring👏Back👏Snickerdoodle👏Ice👏Cream👏 #BringBackSnickerdoodle 🍦 #rainorshineYVR 🍦")
+client.user_timeline("rainorshineYVR").each do |tweet|
+  tweet_time  = tweet.created_at - (60 * 60 * 7)
+  if !tweet.reply? && tweet_time > one_day_ago
+    text = tweet.text.dup
+    text.downcase!
+    reply = "rainorshineYVR tweeted: "
+
+    if text.include?("snickerdoodle") && text.include?("back")
+      reply << "I see snickerdoodle and it might be back! 👏👏👏 "
+    elsif text.include?("snickerdoodle")
+      reply << "I see snickerdoodle 👍 but I'm not sure about the rest...🤔 #BringBackSnickerdoodle "
+    else
+      reply << "no mention of if snickerdoodle will be back!😞👎 #BringBackSnickerdoodle #rainorshineYVR "
+    end
+
+    client.update(reply + tweet.url)
+  else
+    client.update("Bring👏Back👏Snickerdoodle👏Ice👏Cream👏 #BringBackSnickerdoodle 🍦 #rainorshineYVR 🍦")
+  end
+end
+
+
+
