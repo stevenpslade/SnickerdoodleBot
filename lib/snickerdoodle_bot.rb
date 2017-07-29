@@ -13,10 +13,10 @@ search_options = {
 }
 
 found_snickerdoodle_tweet = false
-one_day_ago = Time.now - (60 * 60 * 24)
+one_day_ago = Time.now.utc - (60 * 60 * 24)
 
 client.search("@rainorshineYVR+snickerdoodle -rt", search_options).each do |tweet|
-  tweet_time  = tweet.created_at - (60 * 60 * 7)
+  tweet_time  = tweet.created_at
   if tweet.user.screen_name != "SnickerdooBot" && tweet_time > one_day_ago
     begin
       client.retweet!(tweet)
@@ -31,7 +31,7 @@ end
 
 if !found_snickerdoodle_tweet
   client.search("@rainorshineYVR -rt", search_options).each do |tweet|
-    tweet_time  = tweet.created_at - (60 * 60 * 7)
+    tweet_time  = tweet.created_at
     if tweet.user.screen_name != "SnickerdooBot" && !tweet.reply? && tweet_time > one_day_ago
       begin
         client.update!("Rain or Shine Ice Cream needs to bring back snickerdoodle flavour!🍦👏 #BringBackSnickerdoodle " + tweet.url)
@@ -45,7 +45,7 @@ if !found_snickerdoodle_tweet
 end
 
 client.user_timeline("rainorshineYVR").each do |tweet|
-  tweet_time  = tweet.created_at - (60 * 60 * 7)
+  tweet_time  = tweet.created_at
   if !tweet.reply? && tweet_time > one_day_ago
     text = tweet.text.dup
     text.downcase!
@@ -58,6 +58,8 @@ client.user_timeline("rainorshineYVR").each do |tweet|
     else
       reply << "no mention of if snickerdoodle will be back!😞👎 #BringBackSnickerdoodle #rainorshineYVR "
     end
+
+    puts tweet.text
 
     client.update(reply + tweet.url)
   else
