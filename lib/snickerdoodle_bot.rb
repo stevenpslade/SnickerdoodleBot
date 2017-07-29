@@ -44,6 +44,7 @@ if !found_snickerdoodle_tweet
   end
 end
 
+found_rainorshine_tweet = false
 client.user_timeline("rainorshineYVR").each do |tweet|
   tweet_time  = tweet.created_at
   if !tweet.reply? && tweet_time > one_day_ago
@@ -62,9 +63,12 @@ client.user_timeline("rainorshineYVR").each do |tweet|
     puts tweet.text
 
     client.update(reply + tweet.url)
-  else
-    client.update("Bring👏Back👏Snickerdoodle👏Ice👏Cream👏 #BringBackSnickerdoodle 🍦 #rainorshineYVR 🍦")
+    found_rainorshine_tweet = true
   end
+end
+
+if !found_rainorshine_tweet
+  client.update("Bring👏Back👏Snickerdoodle👏Ice👏Cream👏 #BringBackSnickerdoodle 🍦 #rainorshineYVR 🍦")
 end
 
 
